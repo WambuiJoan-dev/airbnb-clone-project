@@ -50,6 +50,167 @@ Indexing: Implement indexes for fast retrieval of frequently accessed data.
 
 Caching: Use caching strategies to reduce database load and improve performance
 
+This section outlines the core data model for the Airbnb Clone backend. It focuses on the key entities and the relationships between them.
+
+Users
+
+Purpose: Represents both guests and hosts (a single user can be both).
+Important fields
+
+id — Primary key.
+
+username — Unique login handle.
+
+email — Unique email address.
+
+is_host — Boolean flag indicating if the user can list properties.
+
+created_at — Timestamp for auditing.
+
+Relationships
+
+One User (host) ➜ many Properties.
+
+One User (guest) ➜ many Bookings and many Reviews.
+
+Properties
+
+Purpose: A place that can be booked (hosted by a user).
+Important fields
+
+id — Primary key.
+
+host_id — FK → Users.id (the owner/host).
+
+title — Short name of the property.
+
+city, country — Location metadata (extendable to address/lat/lng).
+
+price_per_night, max_guests — Pricing & capacity controls.
+
+Relationships
+
+One Property ➜ many Bookings.
+
+One Property ➜ many Reviews.
+
+Many Properties ➜ one User (host).
+
+Bookings
+
+Purpose: A reservation made by a guest for a property.
+Important fields
+
+id — Primary key.
+
+property_id — FK → Properties.id.
+
+guest_id — FK → Users.id.
+
+check_in, check_out — Stay window (or a date range).
+
+guests — Number of guests.
+
+total_price — Computed at booking time (nights, fees, discounts).
+
+status — e.g., pending, confirmed, cancelled, completed.
+
+Relationships
+
+Many Bookings ➜ one Property.
+
+Many Bookings ➜ one User (guest).
+
+One Booking ➜ one Payment (1:1).
+
+Business/constraints
+
+No overlapping bookings per property for active statuses.
+
+check_out strictly after check_in.
+
+guests ≤ Properties.max_guests.
+
+Payments
+
+Purpose: Tracks payment lifecycle for a booking.
+Important fields
+
+id — Primary key.
+
+booking_id — Unique FK → Bookings.id (enforces 1:1).
+
+amount, currency — Monetary details.
+
+provider — e.g., stripe, mpesa.
+
+provider_payment_id — External reference.
+
+status — e.g., requires_action, pending, succeeded, failed, refunded.
+
+created_at — Timestamp for auditing.
+
+Relationships
+
+One Payment ⇄ one Booking (1:1).
+
+Notes
+
+Status is updated via provider webhooks/callbacks.
+
+Refunds are represented as status changes with provider references.
+
+Reviews
+
+Purpose: Guest feedback on properties.
+Important fields
+
+id — Primary key.
+
+property_id — FK → Properties.id.
+
+guest_id — FK → Users.id.
+
+rating — Integer 1–5.
+
+comment — Optional text.
+
+created_at — Timestamp.
+
+Relationships
+
+Many Reviews ➜ one Property.
+
+Many Reviews ➜ one User (guest).
+
+Constraints
+
+One review per (guest_id, property_id) pair (prevents duplicates).
+
+rating must be between 1 and 5.
+
+Cardinality Summary
+
+User (host) 1 ➜ N Properties
+
+Property 1 ➜ N Bookings
+
+User (guest) 1 ➜ N Bookings
+
+Booking 1 ⇄ 1 Payment
+
+Property 1 ➜ N Reviews
+
+User (guest) 1 ➜ N Reviews
+
+Deletion behavior (recommended):
+
+Deleting a Property should cascade to its Bookings and Reviews.
+
+Deleting a Booking should cascade to its Payment.
+
+Deleting a User should be restricted if they own Properties or reassign those first; guest-owned Bookings/Reviews can cascade or be soft-deleted depending on policy.
+
     Feature Breakdown
 User Management
 Secure registration, login, and JWT-based authentication for both guests and hosts. Users can manage profiles (e.g., host flag), while role-aware permissions protect host-only actions like creating or editing properties.
