@@ -28,21 +28,22 @@ QA Engineer: Ensures the backend functionalities are thoroughly tested and meet 
 
 
     Technology Stack
-Django: A high-level Python web framework used for building the RESTful API.
+Django — High-level Python web framework providing the core app structure, ORM models, admin, and configuration.
 
-Django REST Framework: Provides tools for creating and managing RESTful APIs.
+Django REST Framework (DRF) — Toolkit for building RESTful APIs with serializers, viewsets, authentication, and browsable docs.
 
-PostgreSQL: A powerful relational database used for data storage.
+PostgreSQL — Primary relational database storing application data with strong constraints, transactions, and indexing.
 
-GraphQL: Allows for flexible and efficient querying of data.
+GraphQL — Flexible query layer (via Graphene) enabling clients to fetch exactly the data they need and perform mutations.
 
-Celery: For handling asynchronous tasks such as sending notifications or processing payments.
+Celery — Asynchronous task queue for background jobs (emails/notifications, payment webhooks, heavy processing).
 
-Redis: Used for caching and session management.
+Redis — In-memory data store used as Celery broker/result backend and for caching/throttling.
 
-Docker: Containerization tool for consistent development and deployment environments.
+Docker — Containerization for consistent local and production environments; Compose orchestrates app, DB, and Redis.
 
-CI/CD Pipelines: Automated pipelines for testing and deploying code changes.
+CI/CD Pipelines — Automated build/test/scan and deploy (e.g., with GitHub Actions) to reliably ship changes to staging/production.
+
 
     Database Design
 Indexing: Implement indexes for fast retrieval of frequently accessed data.
