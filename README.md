@@ -50,9 +50,25 @@ Indexing: Implement indexes for fast retrieval of frequently accessed data.
 Caching: Use caching strategies to reduce database load and improve performance
 
     Feature Breakdown
+User Management
+Secure registration, login, and JWT-based authentication for both guests and hosts. Users can manage profiles (e.g., host flag), while role-aware permissions protect host-only actions like creating or editing properties.
+
+Property Management
+Hosts can create, update, and deactivate property listings with key details (location, pricing, capacity, amenities, images). Search, filtering, and ordering enable fast discovery, while validation ensures data quality and consistency.
+
+Booking System
+Guests can check availability and create reservations with validated date ranges and guest counts. Overlap prevention and booking statuses (pending/confirmed/cancelled/completed) maintain accurate calendars and support downstream workflows.
+
+Payment Processing
+Each booking links to a single payment record that tracks amount, currency, provider (e.g., Stripe/M-Pesa), and status. Webhook/callback handling updates payment state reliably, enabling confirmations, failures, and refunds to propagate to the booking.
+
+Review System
+Guests can rate and review properties after stays, with a one-review-per-guest-per-property rule and rating validation (1–5). Aggregated ratings help users assess quality and build trust across the platform.
+
+Data Optimization
+PostgreSQL indexes and constraints (e.g., range overlap checks) keep queries accurate and fast at scale. Redis caching, pagination, and background tasks (Celery) reduce API latency and offload heavy work (e.g., notifications), improving overall responsiveness.
+
+    API Security
 
 
-API Security
-
-
-CI/CD Pipeline
+    CI/CD Pipeline
