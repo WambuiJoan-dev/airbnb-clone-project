@@ -119,31 +119,59 @@ Docker images run as non-root with minimal base, only needed ports exposed.
     Why Security Is Crucial (by Area)
 
 Protecting User Accounts & Data
-
 Prevents account takeover and exposure of PII (emails, names, activity). Trust hinges on confidentiality and integrity of user data.
 
 Securing Properties & Media
-
 Ensures only hosts can modify their listings and uploaded media are safe to store/serve. Stops fraud and malicious file uploads.
 
 Safeguarding Bookings & Availability
-
 Prevents tampering with calendars and reservations (no ghost or double bookings). Integrity here directly impacts user experience and revenue.
 
 Payments & Financial Data
-
 Signature-verified webhooks, idempotency, and strict state transitions prevent fraudulent charges and mismatched booking/payment states. Financial correctness and compliance depend on this.
 
 Reviews & Platform Reputation
-
 Authenticated, one-per-guest reviews with abuse prevention reduce spam and manipulation. Reliable reviews build marketplace trust.
 
 API Reliability & Fair Use
-
 Throttling and input limits protect availability against scraping/DoS while keeping latency predictable for all clients.
 
 Operations & Compliance
-
 Proper logging, alerting, backups, and secret handling enable incident response and legal/contractual compliance without leaking sensitive info.
 
     CI/CD Pipeline
+    What it is:
+Continuous Integration (CI) automatically builds, tests, and analyzes the code on every change (PR/commit). Continuous Delivery/Deployment (CD) packages the app (Docker image), pushes it to a registry, and releases it to a target environment (staging/prod) in a repeatable way.
+
+Why it matters:
+CI/CD catches bugs early, enforces quality/security gates, and keeps environments consistent. It speeds up feedback, reduces regressions, and makes deployments low-risk (automated, versioned, and reproducible), which is critical for a platform handling bookings, payments, and user data.
+
+Typical workflow (high level):
+
+CI: Lint, format, type-check, and test → collect coverage and generate API schema docs.
+
+Security gates: Dependency and static security scans.
+
+Build & publish: Build Docker image, tag with commit SHA/semver, push to container registry.
+
+Deploy: Roll out to staging (run migrations, collectstatic, restart web/celery), smoke test; then promote to production (blue/green or rolling).
+
+Post-deploy: Health checks, alerts, and automatic rollback on failure.
+
+Tools to use:
+
+Orchestration: GitHub Actions (workflows for PR checks, builds, deployments).
+
+Containers: Docker & Docker Compose (local parity), Docker Buildx; Registry: GHCR or Docker Hub.
+
+Testing/Quality: pytest, coverage, flake8/ruff, black, mypy (optional).
+
+Security: Bandit (SAST), Safety or pip-audit (dependency vulns), secret scanning.
+
+Database/Cache in CI: Postgres & Redis service containers.
+
+Docs: drf-spectacular to auto-generate OpenAPI; publish as an artifact or to /api/docs.
+
+Deploy targets (pick one): Fly.io, Render, AWS ECS/Fargate, GCP Cloud Run, or Kubernetes.
+
+Secrets: GitHub Actions Secrets/OIDC to cloud provider (no secrets in repo).
